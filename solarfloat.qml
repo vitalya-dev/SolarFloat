@@ -4,11 +4,6 @@ import QtQuick.Window 2.15
 
 Window {
     id: mainWindow
-    visible: true
-    width: 900
-    height: 600
-    flags: Qt.FramelessWindowHint | Qt.Window
-    color: base3 // Используем основной цвет фона
 
     readonly property color base3: "#fdf6e3"
     readonly property color base2: "#eee8d5"
@@ -17,10 +12,16 @@ Window {
     readonly property color blue: "#268bd2"
     property int currentFontSize: 16
 
+    visible: true
+    width: 900
+    height: 600
+    flags: Qt.FramelessWindowHint | Qt.Window
+    color: base3 // Используем основной цвет фона
     Component.onCompleted: {
         var args = Qt.application.arguments;
         if (args.length >= 3)
             editor.text = args[args.length - 1];
+
     }
 
     Row {
@@ -29,6 +30,7 @@ Window {
         // 1. ПАНЕЛЬ ПЕРЕТАСКИВАНИЯ
         Rectangle {
             id: dragHandle
+
             width: 40
             height: parent.height
             color: base2 // Цвет панели чуть темнее фона
@@ -36,15 +38,19 @@ Window {
             Column {
                 anchors.centerIn: parent
                 spacing: 8
+
                 Repeater {
                     model: 12
+
                     Rectangle {
                         width: 4
                         height: 4
                         radius: 2
                         color: base1
                     }
+
                 }
+
             }
 
             MouseArea {
@@ -52,26 +58,29 @@ Window {
                 cursorShape: Qt.SizeAllCursor
                 onPressed: mainWindow.startSystemMove()
             }
+
         }
 
         // 2. КОНТЕЙНЕР РЕДАКТОРА
         Rectangle {
             id: editorContainer
+
             width: parent.width - dragHandle.width
             height: parent.height
             color: base3 // Основной цвет фона Solarized
 
             ScrollView {
                 id: scrollView
+
                 anchors.fill: parent
                 anchors.margins: 25
                 clip: true
 
-                // Делаем фон ScrollView прозрачным
-                background: Item {}
-
                 TextEdit {
+                    // Отладочный желтый фон удален!
+
                     id: editor
+
                     width: scrollView.availableWidth
                     height: Math.max(contentHeight, scrollView.availableHeight)
                     focus: true
@@ -81,20 +90,26 @@ Window {
                     font.pixelSize: currentFontSize
                     color: base01 // Правильный цвет текста
 
-                    // Отладочный желтый фон удален!
-
                     WheelHandler {
                         acceptedModifiers: Qt.ControlModifier
-                        onWheel: event => {
+                        onWheel: (event) => {
                             if (event.angleDelta.y > 0 && currentFontSize < 70)
                                 currentFontSize += 2;
                             else if (event.angleDelta.y < 0 && currentFontSize > 6)
                                 currentFontSize -= 2;
                         }
                     }
+
                 }
+
+                // Делаем фон ScrollView прозрачным
+                background: Item {
+                }
+
             }
+
         }
+
     }
 
     // Горячие клавиши
@@ -102,18 +117,28 @@ Window {
         sequence: "Escape"
         onActivated: Qt.quit()
     }
+
     Shortcut {
         sequences: ["Ctrl+Plus", "Ctrl+="]
-        onActivated: if (currentFontSize < 70)
-            currentFontSize += 2
+        onActivated: {
+            if (currentFontSize < 70) {
+                currentFontSize += 2;
+            }
+        }
     }
+
     Shortcut {
         sequence: "Ctrl+-"
-        onActivated: if (currentFontSize > 6)
-            currentFontSize -= 2
+        onActivated: {
+            if (currentFontSize > 6) {
+                currentFontSize -= 2;
+            }
+        }
     }
+
     Shortcut {
         sequence: "Ctrl+0"
         onActivated: currentFontSize = 16
     }
+
 }
