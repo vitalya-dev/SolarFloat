@@ -89,6 +89,8 @@ Window {
                     font.family: "Fira Code"
                     font.pixelSize: currentFontSize
                     color: base01 // Правильный цвет текста
+                    selectionColor: blue
+                    selectedTextColor: base3
 
                     WheelHandler {
                         acceptedModifiers: Qt.ControlModifier
@@ -121,18 +123,18 @@ Window {
     Shortcut {
         sequences: ["Ctrl+Plus", "Ctrl+="]
         onActivated: {
-            if (currentFontSize < 70) {
+            if (currentFontSize < 70)
                 currentFontSize += 2;
-            }
+
         }
     }
 
     Shortcut {
         sequence: "Ctrl+-"
         onActivated: {
-            if (currentFontSize > 6) {
+            if (currentFontSize > 6)
                 currentFontSize -= 2;
-            }
+
         }
     }
 
