@@ -68,6 +68,7 @@ Window {
                 TextEdit {
                     id: editor
                     width: scrollView.availableWidth
+                    height: Math.max(contentHeight, scrollView.availableHeight)
                     focus: true
                     selectByMouse: true
                     wrapMode: TextEdit.Wrap
