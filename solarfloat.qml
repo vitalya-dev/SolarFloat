@@ -75,10 +75,10 @@ Window {
                 anchors.fill: parent
                 anchors.margins: 25
                 clip: true
+                // ОТКЛЮЧАЕМ ГОРИЗОНТАЛЬНЫЙ СКРОЛЛБАР
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                 TextEdit {
-                    // Отладочный желтый фон удален!
-
                     id: editor
 
                     width: scrollView.availableWidth
@@ -89,7 +89,6 @@ Window {
                     font.family: "Fira Code"
                     font.pixelSize: currentFontSize
                     font.weight: Font.DemiBold
-
                     color: base01 // Правильный цвет текста
                     selectionColor: blue
                     selectedTextColor: base3
@@ -104,10 +103,6 @@ Window {
                         }
                     }
 
-                }
-
-                // Делаем фон ScrollView прозрачным
-                background: Item {
                 }
 
             }
