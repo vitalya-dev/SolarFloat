@@ -87,6 +87,8 @@ Window {
 
                     // ВАЖНО: привязываем ширину к ScrollView для корректного Wrap
                     width: scrollView.availableWidth
+                    // ВАЖНО: привязываем высоту, чтобы редактор всегда занимал всё свободное место
+                    height: Math.max(contentHeight, scrollView.availableHeight)
                     focus: true
                     selectByMouse: true
                     // --- WORD WRAP ---
