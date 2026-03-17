@@ -99,6 +99,12 @@ Window {
                     selectedTextColor: base3
                     text: "Если ты видишь этот текст, значит аргументы не передались."
 
+                    WheelHandler {
+                        // Логика масштабирования будет добавлена на следующем шаге
+
+                        acceptedModifiers: Qt.ControlModifier
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton
