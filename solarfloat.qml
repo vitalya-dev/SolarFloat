@@ -4,6 +4,11 @@ import QtQuick.Window 2.15
 
 Window {
     id: mainWindow
+    visible: true
+    width: 900
+    height: 600
+    flags: Qt.FramelessWindowHint | Qt.Window
+    color: "#fdf6e3"
 
     readonly property color base3: "#fdf6e3"
     readonly property color base2: "#eee8d5"
@@ -12,187 +17,87 @@ Window {
     readonly property color blue: "#268bd2"
     property int currentFontSize: 16
 
-    visible: true
-    width: 900
-    height: 600
-    flags: Qt.FramelessWindowHint | Qt.Window
-    color: "#fdf6e3"
-    // Логика получения текста из аргументов командной строки
     Component.onCompleted: {
         var args = Qt.application.arguments;
-        // В режиме 'qml' аргумент после '--' обычно идет под индексом 2 или 3
         if (args.length >= 3)
             editor.text = args[args.length - 1];
-
     }
 
     Row {
         anchors.fill: parent
 
-        // --- 1. ПАНЕЛЬ ДЛЯ ПЕРЕТАСКИВАНИЯ ---
+        // 1. ПАНЕЛЬ ПЕРЕТАСКИВАНИЯ (Светло-серый)
         Rectangle {
             id: dragHandle
-
             width: 40
             height: parent.height
-            color: base2
+            color: "#e0e0e0" // Подсветка панели
 
             Column {
                 anchors.centerIn: parent
                 spacing: 8
-
                 Repeater {
                     model: 12
-
-                    Rectangle {
-                        width: 4
-                        height: 4
-                        radius: 2
-                        color: base1
-                    }
-
+                    Rectangle { width: 4; height: 4; radius: 2; color: base1 }
                 }
-
             }
 
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.SizeAllCursor
-                onPressed: {
-                    mainWindow.startSystemMove();
-                }
+                onPressed: mainWindow.startSystemMove()
             }
-
         }
 
-        // --- 2. ОБЛАСТЬ РЕДАКТОРА ---
+        // 2. КОНТЕЙНЕР РЕДАКТОРА (Розовый)
         Rectangle {
             id: editorContainer
-
             width: parent.width - dragHandle.width
             height: parent.height
-            color: "transparent"
+            color: "#ffe0f0" // Видим всю область справа от панели
 
             ScrollView {
                 id: scrollView
-
                 anchors.fill: parent
                 anchors.margins: 25
                 clip: true
+                
+                // ФОН SCROLLVIEW (Светло-синий)
+                background: Rectangle { color: "#e0f0ff" }
 
                 TextEdit {
-                    // Перенос по словам
-
                     id: editor
-
-                    // ВАЖНО: привязываем ширину к ScrollView для корректного Wrap
                     width: scrollView.availableWidth
-                    // ВАЖНО: привязываем высоту, чтобы редактор всегда занимал всё свободное место
-                    //height: Math.max(contentHeight, scrollView.availableHeight)
                     focus: true
                     selectByMouse: true
-                    // --- WORD WRAP ---
                     wrapMode: TextEdit.Wrap
                     font.family: "Fira Code"
                     font.pixelSize: currentFontSize
-                    font.weight: Font.DemiBold
                     color: base01
-                    selectionColor: blue
-                    selectedTextColor: base3
-                    text: "Если ты видишь этот текст, значит аргументы не передались."
+                    
+                    // ФОН САМОГО ТЕКСТА (Желтоватый)
+                    // Поможет увидеть, куда растягивается текст
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#ffffd0"
+                        z: -1 // Чтобы цвет был под текстом
+                    }
 
                     WheelHandler {
                         acceptedModifiers: Qt.ControlModifier
                         onWheel: (event) => {
-                            if (event.angleDelta.y > 0) {
-                                if (currentFontSize < 70)
-                                    currentFontSize += 2;
-
-                            } else if (event.angleDelta.y < 0) {
-                                if (currentFontSize > 6)
-                                    currentFontSize -= 2;
-
-                            }
+                            if (event.angleDelta.y > 0 && currentFontSize < 70) currentFontSize += 2;
+                            else if (event.angleDelta.y < 0 && currentFontSize > 6) currentFontSize -= 2;
                         }
                     }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.NoButton
-                        cursorShape: Qt.IBeamCursor
-                    }
-
-                    cursorDelegate: Rectangle {
-                        width: 2
-                        height: editor.cursorRectangle.height
-                        color: "#2aa198"
-
-                        SequentialAnimation on opacity {
-                            loops: Animation.Infinite
-
-                            NumberAnimation {
-                                from: 1
-                                to: 0
-                                duration: 500
-                            }
-
-                            NumberAnimation {
-                                from: 0
-                                to: 1
-                                duration: 500
-                            }
-
-                        }
-
-                    }
-
                 }
-
-                // Чтобы текст не уезжал под скроллбар
-                ScrollBar.vertical: ScrollBar {
-                    policy: ScrollBar.AlwaysOn
-
-                    contentItem: Rectangle {
-                        implicitWidth: 6
-                        radius: 3
-                        color: base1
-                    }
-
-                }
-
             }
-
-        }
-
-    }
-
-    // Горячие клавиши
-    Shortcut {
-        sequence: "Escape"
-        onActivated: Qt.quit()
-    }
-
-    Shortcut {
-        sequences: ["Ctrl+Plus", "Ctrl+="]
-        onActivated: {
-            if (currentFontSize < 70)
-                currentFontSize += 2;
-
         }
     }
 
-    Shortcut {
-        sequence: "Ctrl+-"
-        onActivated: {
-            if (currentFontSize > 6)
-                currentFontSize -= 2;
-
-        }
-    }
-
-    Shortcut {
-        sequence: "Ctrl+0"
-        onActivated: currentFontSize = 16
-    }
-
+    // Горячие клавиши (без изменений)
+    Shortcut { sequence: "Escape"; onActivated: Qt.quit() }
+    Shortcut { sequences: ["Ctrl+Plus", "Ctrl+="]; onActivated: if (currentFontSize < 70) currentFontSize += 2 }
+    Shortcut { sequence: "Ctrl+-"; onActivated: if (currentFontSize > 6) currentFontSize -= 2 }
+    Shortcut { sequence: "Ctrl+0"; onActivated: currentFontSize = 16 }
 }
