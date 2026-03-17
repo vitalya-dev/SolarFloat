@@ -67,7 +67,7 @@ Window {
 
             width: parent.width - dragHandle.width
             height: parent.height
-            color: base3 // Основной цвет фона Solarized
+            color: "transparent"
 
             ScrollView {
                 id: scrollView
@@ -88,6 +88,8 @@ Window {
                     wrapMode: TextEdit.Wrap
                     font.family: "Fira Code"
                     font.pixelSize: currentFontSize
+                    font.weight: Font.DemiBold
+
                     color: base01 // Правильный цвет текста
                     selectionColor: blue
                     selectedTextColor: base3
