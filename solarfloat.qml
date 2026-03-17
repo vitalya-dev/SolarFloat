@@ -8,7 +8,7 @@ Window {
     width: 900
     height: 600
     flags: Qt.FramelessWindowHint | Qt.Window
-    color: "#fdf6e3"
+    color: base3 // Используем основной цвет фона
 
     readonly property color base3: "#fdf6e3"
     readonly property color base2: "#eee8d5"
@@ -26,19 +26,24 @@ Window {
     Row {
         anchors.fill: parent
 
-        // 1. ПАНЕЛЬ ПЕРЕТАСКИВАНИЯ (Светло-серый)
+        // 1. ПАНЕЛЬ ПЕРЕТАСКИВАНИЯ
         Rectangle {
             id: dragHandle
             width: 40
             height: parent.height
-            color: "#e0e0e0" // Подсветка панели
+            color: base2 // Цвет панели чуть темнее фона
 
             Column {
                 anchors.centerIn: parent
                 spacing: 8
                 Repeater {
                     model: 12
-                    Rectangle { width: 4; height: 4; radius: 2; color: base1 }
+                    Rectangle {
+                        width: 4
+                        height: 4
+                        radius: 2
+                        color: base1
+                    }
                 }
             }
 
@@ -49,21 +54,21 @@ Window {
             }
         }
 
-        // 2. КОНТЕЙНЕР РЕДАКТОРА (Розовый)
+        // 2. КОНТЕЙНЕР РЕДАКТОРА
         Rectangle {
             id: editorContainer
             width: parent.width - dragHandle.width
             height: parent.height
-            color: "#ffe0f0" // Видим всю область справа от панели
+            color: base3 // Основной цвет фона Solarized
 
             ScrollView {
                 id: scrollView
                 anchors.fill: parent
                 anchors.margins: 25
                 clip: true
-                
-                // ФОН SCROLLVIEW (Светло-синий)
-                background: Rectangle { color: "#e0f0ff" }
+
+                // Делаем фон ScrollView прозрачным
+                background: Item {}
 
                 TextEdit {
                     id: editor
@@ -74,21 +79,17 @@ Window {
                     wrapMode: TextEdit.Wrap
                     font.family: "Fira Code"
                     font.pixelSize: currentFontSize
-                    color: base01
-                    
-                    // ФОН САМОГО ТЕКСТА (Желтоватый)
-                    // Поможет увидеть, куда растягивается текст
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#ffffd0"
-                        z: -1 // Чтобы цвет был под текстом
-                    }
+                    color: base01 // Правильный цвет текста
+
+                    // Отладочный желтый фон удален!
 
                     WheelHandler {
                         acceptedModifiers: Qt.ControlModifier
-                        onWheel: (event) => {
-                            if (event.angleDelta.y > 0 && currentFontSize < 70) currentFontSize += 2;
-                            else if (event.angleDelta.y < 0 && currentFontSize > 6) currentFontSize -= 2;
+                        onWheel: event => {
+                            if (event.angleDelta.y > 0 && currentFontSize < 70)
+                                currentFontSize += 2;
+                            else if (event.angleDelta.y < 0 && currentFontSize > 6)
+                                currentFontSize -= 2;
                         }
                     }
                 }
@@ -96,9 +97,23 @@ Window {
         }
     }
 
-    // Горячие клавиши (без изменений)
-    Shortcut { sequence: "Escape"; onActivated: Qt.quit() }
-    Shortcut { sequences: ["Ctrl+Plus", "Ctrl+="]; onActivated: if (currentFontSize < 70) currentFontSize += 2 }
-    Shortcut { sequence: "Ctrl+-"; onActivated: if (currentFontSize > 6) currentFontSize -= 2 }
-    Shortcut { sequence: "Ctrl+0"; onActivated: currentFontSize = 16 }
+    // Горячие клавиши
+    Shortcut {
+        sequence: "Escape"
+        onActivated: Qt.quit()
+    }
+    Shortcut {
+        sequences: ["Ctrl+Plus", "Ctrl+="]
+        onActivated: if (currentFontSize < 70)
+            currentFontSize += 2
+    }
+    Shortcut {
+        sequence: "Ctrl+-"
+        onActivated: if (currentFontSize > 6)
+            currentFontSize -= 2
+    }
+    Shortcut {
+        sequence: "Ctrl+0"
+        onActivated: currentFontSize = 16
+    }
 }
