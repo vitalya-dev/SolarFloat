@@ -100,9 +100,18 @@ Window {
                     text: "Если ты видишь этот текст, значит аргументы не передались."
 
                     WheelHandler {
-                        // Логика масштабирования будет добавлена на следующем шаге
-
                         acceptedModifiers: Qt.ControlModifier
+                        onWheel: (event) => {
+                            if (event.angleDelta.y > 0) {
+                                if (currentFontSize < 70)
+                                    currentFontSize += 2;
+
+                            } else if (event.angleDelta.y < 0) {
+                                if (currentFontSize > 6)
+                                    currentFontSize -= 2;
+
+                            }
+                        }
                     }
 
                     MouseArea {
