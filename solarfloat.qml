@@ -79,28 +79,62 @@ Window {
                 anchors.fill: parent
                 anchors.margins: 25
                 clip: true
+                // Отключаем горизонтальный скролл навсегда
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-                TextEdit {
-                    // Перенос по словам
+                Item {
+                    id: textContainer
 
-                    id: editor
-
-                    // ВАЖНО: привязываем ширину к ScrollView для корректного Wrap
                     width: scrollView.availableWidth
-                    // ВАЖНО: привязываем высоту, чтобы редактор всегда занимал всё свободное место
-                    height: Math.max(contentHeight, scrollView.availableHeight)
-                    focus: true
-                    selectByMouse: true
-                    // --- WORD WRAP ---
-                    wrapMode: TextEdit.Wrap
-                    font.family: "Fira Code"
-                    font.pixelSize: currentFontSize
-                    font.weight: Font.DemiBold
-                    color: base01
-                    selectionColor: blue
-                    selectedTextColor: base3
-                    text: "Если ты видишь этот текст, значит аргументы не передались."
+                    // Разрываем цикл привязки: используем scrollView.height вместо availableHeight
+                    height: Math.max(editor.contentHeight, scrollView.height)
 
+                    TextEdit {
+                        // Перенос по словам
+
+                        id: editor
+
+                        // Привязываем ширину к нашему новому контейнеру
+                        width: parent.width
+                        focus: true
+                        selectByMouse: true
+                        // --- WORD WRAP ---
+                        wrapMode: TextEdit.Wrap
+                        font.family: "Fira Code"
+                        font.pixelSize: currentFontSize
+                        font.weight: Font.DemiBold
+                        color: base01
+                        selectionColor: blue
+                        selectedTextColor: base3
+                        text: "Если ты видишь этот текст, значит аргументы не передались."
+
+                        cursorDelegate: Rectangle {
+                            width: 2
+                            height: editor.cursorRectangle.height
+                            color: "#2aa198"
+
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+
+                                NumberAnimation {
+                                    from: 1
+                                    to: 0
+                                    duration: 500
+                                }
+
+                                NumberAnimation {
+                                    from: 0
+                                    to: 1
+                                    duration: 500
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    // Обработчик колесика теперь висит на контейнере
                     WheelHandler {
                         acceptedModifiers: Qt.ControlModifier
                         onWheel: (event) => {
@@ -116,34 +150,11 @@ Window {
                         }
                     }
 
+                    // Курсор мыши тоже будет правильным на всей области контейнера
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
-                    }
-
-                    cursorDelegate: Rectangle {
-                        width: 2
-                        height: editor.cursorRectangle.height
-                        color: "#2aa198"
-
-                        SequentialAnimation on opacity {
-                            loops: Animation.Infinite
-
-                            NumberAnimation {
-                                from: 1
-                                to: 0
-                                duration: 500
-                            }
-
-                            NumberAnimation {
-                                from: 0
-                                to: 1
-                                duration: 500
-                            }
-
-                        }
-
                     }
 
                 }
